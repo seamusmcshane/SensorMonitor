@@ -301,3 +301,8 @@ class BME280:
         pressure = self.get_pressure()
         altitude = 44330.0 * (1.0 - pow(pressure / qnh, (1.0 / 5.255)))
         return altitude
+
+    def get_thp(self):
+        self.update_sensor()
+        return [self.temperature, self.humidity, self.pressure]
+

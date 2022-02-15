@@ -6,7 +6,6 @@ enviroPlus = EnviroPlus();
 
 # Threading
 import threading
-import atexit
 
 updateLock = threading.Lock()
 updateThread = threading.Thread()
@@ -58,9 +57,6 @@ def createRestApp():
 	startUpdateThread()
 
 	app.run(host="0.0.0.0", port="8080")
-
-	# Ctrl-C handling
-	atexit.register(interrupt)
 
 	return app
 

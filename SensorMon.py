@@ -62,9 +62,3 @@ def createRestApp():
 
 # create the rest app
 app = createRestApp()
-
-# Debug
-# from time import sleep
-#while True:
-#	enviroPlus.updateValues()
-#	sleep(1)

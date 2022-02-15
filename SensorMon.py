@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-import threading
-import atexit
 
 # The board in use
 from boards.enviroplus import EnviroPlus
 enviroPlus = EnviroPlus();
 
 # Threading
+import threading
+import atexit
+
 updateLock = threading.Lock()
 updateThread = threading.Thread()
 

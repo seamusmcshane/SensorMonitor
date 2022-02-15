@@ -9,6 +9,10 @@ import threading
 
 updateLock = threading.Lock()
 updateThread = threading.Thread()
+running = False
+
+# Sleep
+from time import sleep
 
 ## Rest API
 import flask
@@ -17,27 +21,24 @@ from flask import Flask,request, jsonify, Response
 def createRestApp():
 	app = Flask(__name__)
 
-	def interrupt():
-		global updateThread
-		updateThread.cancel()
-
 	def update():
-		global updateThread
-		with updateLock:
-			enviroPlus.updateValues()
+		global running
+		global updateLock
+		while running:
+			with updateLock:
+				board.updateValues()
+			# Sleep outside the lock!
+			sleep(1)
 
-		updateThread = threading.Timer(1, update, ())
-		updateThread.start()
-
-	def startUpdateThread():
-
-		# Preinit
+	def beginUpdating():
+		global running
 		global updateThread
 
 		# Update Thread
-		updateThread = threading.Timer(1, update, ())
+		updateThread = threading.Thread(None, update)
 
-		# Thread Started
+		# Start
+		running = True
 		updateThread.start()
 
 	# Default path
@@ -49,12 +50,12 @@ def createRestApp():
 	# Our Values Path
 	@app.route('/values', methods=['GET'])
 	def api_all():
+		global updateLock
 		with updateLock:
-
 			# Response is the sensor values wrapped in json
-			return Response(response=enviroPlus.getJSONValues(), status=200, mimetype="application/json")
+			return Response(response=board.getJSONValues(), status=200, mimetype="application/json")
 
-	startUpdateThread()
+	beginUpdating()
 
 	app.run(host="0.0.0.0", port="8080")
 

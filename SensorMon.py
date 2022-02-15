@@ -1,8 +1,24 @@
 #!/usr/bin/env python3
 
-# The board in use
-from boards.enviroplus import EnviroPlus
-enviroPlus = EnviroPlus();
+# Commandline args
+from argparse import ArgumentParser
+parser = ArgumentParser(description='Sensor Monitor')
+
+# Commandline Arguments
+boardName = "not set"
+parser.add_argument('boardname', help='A sensor board name eg : EnviroPlus')
+args = parser.parse_args()
+
+# The choosen board
+boardName = args.boardname
+print("Choosen Board " + boardName)
+
+# The board module importer
+import importlib
+BoardClass = getattr(importlib.import_module("boards." + boardName.lower()), boardName)
+
+# Instantiate the selected board
+board = BoardClass()
 
 # Threading
 import threading

@@ -1,9 +1,12 @@
 # Waveshare Environment Sensor HAT Board Support
-# Devices supported - BM280 (Temperature, Humidity and Pressure),
+# Devices supported - BM280 (Temperature, Humidity and Pressure), TSL2591 (light, infrared,+lux via calculation)
 
 # Temperature, Humidity and Pressure
 from smbus import SMBus
 from sensors.BME280 import BME280
+
+# Light, IR, Lux
+from python_tsl2591 import tsl2591
 
 from utility.cbuffer import CBuffer
 from utility.picputemperature import PICPUTemp
@@ -20,6 +23,10 @@ class Values:
 		self.temperature = 0.0
 		self.humidity = 0.0
 		self.pressure = 0.0
+
+		self.fullspectrum = 0.0
+		self.infrared = 0.0
+		self.lux = 0.0
 
 	def toJSON(self):
 		return "{ \"values\" :" + json.dumps(self, default=lambda o: o.__dict__, sort_keys=False) + "}"
@@ -48,9 +55,22 @@ class WaveshareESH:
 
 		print("BME280 Ready")
 
+	# Setup the TSL2591 Light, IR and Lux Sensor
+	def initTSL2591(self):
+
+		self.tsl2591 = tsl2591()
+
+		# Buffers for TSL2591 stats
+		self.tsl2591_full = CBuffer(SAMPLE_WINDOW_LEN)
+		self.tsl2591_ir = CBuffer(SAMPLE_WINDOW_LEN)
+		self.tsl2591_lux = CBuffer(SAMPLE_WINDOW_LEN)
+
+		print("TSL2591 Ready")
+
 	def __init__(self):
 
 		self.initBME280()
+		self.initTSL2591()
 
 		# Sensor values for formating into json
 		self.currentValues = Values()
@@ -80,17 +100,22 @@ class WaveshareESH:
 		# BME280 lib is modified to coalesc the three calls
 		thp = self.bme280.get_thp()
 		temperature =  self.smooth_temp_value(thp[0], self.smooth_factor)	# calls temperature specifc smooth
-
 		self.bme280_humidity.addValue(thp[1])
 		humidity = self.bme280_humidity.getValue()
-
 		self.bme280_pressure.addValue(thp[2])
 		pressure = self.bme280_pressure.getValue()
-
-		# Store our values (to turn into json later)
+		# Write current smoothed data to json values
 		self.currentValues.temperature, self.currentValues.humidity, self.currentValues.pressure = temperature, humidity, pressure
+
+		# TSL2591
+		fullspectrum, infrared = self.tsl2591.get_full_luminosity()
+		lux = self.tsl2591.calculate_lux(fullspectrum, infrared)
+		self.tsl2591_full.addValue(fullspectrum);
+		self.tsl2591_ir.addValue(infrared);
+		self.tsl2591_lux.addValue(lux);
+		# Write current smoothed data to json values
+		self.currentValues.fullspectrum, self.currentValues.infrared, self.currentValues.lux = fullspectrum, infrared, lux
 
 	def getJSONValues(self):
 		# Return values formated as json
 		return self.currentValues.toJSON()
-

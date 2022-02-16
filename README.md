@@ -17,3 +17,15 @@ apt install python3
 apt install python3-numpy
 
 apt install python3-flask
+
+### Sensor Boards
+You only need the dependancies for you board you do not need to install everything.
+
+Each sensor board has its own dependancies. To save space install just what is needed for the board you are going to use.
+
+#### Pimoroni EnviroPlus
+python3 -m pip install ltr559
+python3 -m pip install st7735
+python3 -m pip install ads1015
+###### Fonts used for the OLED display
+apt install fonts-noto-core fonts-noto-mono fonts-noto-extra

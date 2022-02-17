@@ -15,12 +15,22 @@
 #
 
 # Commandline args
-from argparse import ArgumentParser
+from argparse import ArgumentParser, BooleanOptionalAction
 parser = ArgumentParser(description='Sensor Monitor')
 
 # Commandline Arguments
 parser.add_argument('-boardname', help='A sensor board name.')
+parser.add_argument('-boardlist', '-bl', help='Prints the list of supported boards.', action=BooleanOptionalAction)
 args = parser.parse_args()
+
+boardList = args.boardlist
+if boardList:
+	print("\t\tBoard Support List")
+	print("Board Name\t\tDescription")
+	print("_______________________________________________________________")
+	print("EnviroPlus\t\tPimoroni EnviroPlus")
+	print("WaveshareESH\t\tWaveshare Enviroment Sensor HAT")
+	exit()
 
 # The choosen board
 boardName = args.boardname

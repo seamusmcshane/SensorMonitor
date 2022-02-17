@@ -62,10 +62,6 @@ class Values:
 
 class WaveshareESH:
 
-	# This you will need to calibrate this as they depend on the PI.
-	# Best done with a physical thermometer or a calibrated reference sensor.
-	# Value depends on how close the sensor is to the PI, and the Pi's thermals. Here there is a tall header so 1cm distance and pi is inside a aluminum case, with very low load.
-	smooth_factor = 0.9;
 	def initLTR390(self):
 
 		# Buffers for the LTR390 Stats
@@ -108,7 +104,14 @@ class WaveshareESH:
 
 		print("TSL2591 Ready")
 
-	def __init__(self):
+	def __init__(self, smooth_factor = 0.9):
+
+		# You will need to calibrate this.
+		# Best done with a physical thermometer or a calibrated reference sensor.
+		# Value depends on how close the sensor is to the PI, and the Pi's thermals.
+		# 0.9 was used with a tall header outside a case with - 1cm distance to the PI.
+		# PI is inside a aluminum case, with very low load.
+		self.smooth_factor = smooth_factor
 
 		self.initBME280()
 		self.initTSL2591()
@@ -119,8 +122,12 @@ class WaveshareESH:
 
 		print("Waveshare Environment Sensor HAT Ready");
 
-	# Assumes you are sampling the sensor more than you are storing the data
 	def smooth_temp_value(self, raw_value, smooth_factor):
+		""" Adjusts the BME280 temperature reading to account for distance
+		to the PI CPU which genrates enough heat to affect the reading.
+		Smoothing assumes you are sampling the sensor more than you are
+		storing the data.
+		"""
 
 		self.bme280_temps.addValue(raw_value)
 
@@ -131,10 +138,10 @@ class WaveshareESH:
 		# Dampens the average temp by the cpu average temp.
 		# Dampening is scaled using a smooth factor for fine tuning.
 		# Adjust smooth_factor based on how close the sensor is to the cpu/case and how hot they get.
-		# see smooth_factor at the top of this class.
 		return (avg_temp - ((cpu_avg_temp - avg_temp) / smooth_factor))
 
 	def updateValues(self):
+		""" Performs a collection of values from supported devices """
 
 		# Update the cpu temp which is used to smooth/adjust the bme280 temp
 		self.cpu_temp.update()
@@ -177,5 +184,6 @@ class WaveshareESH:
 		self.currentValues.uvs, self.currentValues.uvi = uvs, uvi
 
 	def getJSONValues(self):
-		# Return values formated as json
+		""" Return values formated as json """
+
 		return self.currentValues.toJSON()

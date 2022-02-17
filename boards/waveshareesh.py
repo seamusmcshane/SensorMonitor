@@ -14,7 +14,10 @@
 #
 
 # Waveshare Environment Sensor HAT Board Support
-# Devices supported - BM280 (Temperature, Humidity and Pressure), TSL2591 (light, infrared,+lux via calculation)
+# Devices supported -
+# BME280 (Temperature, Humidity and Pressure),
+# TSL2591 (light, infrared,+lux via calculation)
+# LTR390 (als, +lux via calculation, uvs, +uvi via calculation)
 
 # Temperature, Humidity and Pressure
 from smbus import SMBus
@@ -22,6 +25,9 @@ from sensors.BME280 import BME280
 
 # Light, IR, Lux
 from python_tsl2591 import tsl2591
+
+# ALS, LUX, UV, UVI
+from sensors.LTR390 import LTR390
 
 from utility.cbuffer import CBuffer
 from utility.picputemperature import PICPUTemp
@@ -39,9 +45,14 @@ class Values:
 		self.humidity = 0.0
 		self.pressure = 0.0
 
-		self.fullspectrum = 0.0
+		self.fullspectrum= 0.0
 		self.infrared = 0.0
-		self.lux = 0.0
+		self.lux1 = 0.0
+
+		self.als = 0.0
+		self.lux2 = 0.0
+		self.uvs = 0.0
+		self.uvi = 0.0
 
 	def toJSON(self):
 		return "{ \"values\" :" + json.dumps(self, default=lambda o: o.__dict__, sort_keys=False) + "}"
@@ -52,6 +63,18 @@ class WaveshareESH:
 	# Best done with a physical thermometer or a calibrated reference sensor.
 	# Value depends on how close the sensor is to the PI, and the Pi's thermals. Here there is a tall header so 1cm distance and pi is inside a aluminum case, with very low load.
 	smooth_factor = 0.9;
+	def initLTR390(self):
+
+		# Buffers for the LTR390 Stats
+		self.ltr390_als = CBuffer(SAMPLE_WINDOW_LEN)
+		self.ltr390_lux = CBuffer(SAMPLE_WINDOW_LEN)
+		self.ltr390_uvs = CBuffer(SAMPLE_WINDOW_LEN)
+		self.ltr390_uvi = CBuffer(SAMPLE_WINDOW_LEN)
+
+		# Create an LTR390 instance
+		self.ltr390 = LTR390(i2c_dev=I2C_DEV)
+
+		print("LTR390 Ready")
 
 	# Setup the BME Temperature, Humidity and Pressure sensor
 	def initBME280(self):
@@ -86,6 +109,7 @@ class WaveshareESH:
 
 		self.initBME280()
 		self.initTSL2591()
+		self.initLTR390()
 
 		# Sensor values for formating into json
 		self.currentValues = Values()
@@ -129,7 +153,25 @@ class WaveshareESH:
 		self.tsl2591_ir.addValue(infrared);
 		self.tsl2591_lux.addValue(lux);
 		# Write current smoothed data to json values
-		self.currentValues.fullspectrum, self.currentValues.infrared, self.currentValues.lux = fullspectrum, infrared, lux
+		self.currentValues.fullspectrum, self.currentValues.infrared, self.currentValues.lux1 = fullspectrum, infrared, lux
+
+		# LTS390
+		aluu = self.ltr390.getAllValues()
+
+		# Add to our buffers
+		self.ltr390_als.addValue(aluu[0])
+		self.ltr390_lux.addValue(aluu[1])
+		self.ltr390_uvs.addValue(aluu[2])
+		self.ltr390_uvi.addValue(aluu[3])
+
+		# get our smoothed values
+		als = self.ltr390_als.getValue();
+		lux = self.ltr390_lux.getValue();
+		uvs = self.ltr390_uvs.getValue();
+		uvi = self.ltr390_uvi.getValue();
+
+		self.currentValues.als, self.currentValues.lux2 = als, lux
+		self.currentValues.uvs, self.currentValues.uvi = uvs, uvi
 
 	def getJSONValues(self):
 		# Return values formated as json

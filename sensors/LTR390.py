@@ -115,7 +115,7 @@ class LTR390:
 	collection time for a valid reading - 200ms overall for both reads.
 	"""
 
-	def __init__(self, address=LTR390_ADDR, i2c_dev=None, res=MEAS_RATE.RES_18BIT_100ms, gainrange=GAIN.RANGE_1, wfact=1):
+	def __init__(self, address=LTR390_ADDR, i2c_dev=None, res=MEAS_RATE.RES_18BIT_100ms, gainrange=GAIN.RANGE_18, wfact=1):
 
 		self.address = address
 		self.i2c = i2c_dev

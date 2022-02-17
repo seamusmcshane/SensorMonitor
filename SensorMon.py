@@ -19,13 +19,17 @@ from argparse import ArgumentParser
 parser = ArgumentParser(description='Sensor Monitor')
 
 # Commandline Arguments
-boardName = "not set"
-parser.add_argument('boardname', help='A sensor board name eg : EnviroPlus')
+parser.add_argument('-boardname', help='A sensor board name.')
 args = parser.parse_args()
 
 # The choosen board
 boardName = args.boardname
-print("Choosen Board " + boardName)
+if boardName != None:
+	print("Choosen Board " + boardName)
+else:
+	print("No Board Choosen, showing help")
+	parser.print_help()
+	exit()
 
 # The board module importer
 import importlib

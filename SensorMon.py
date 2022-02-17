@@ -1,4 +1,18 @@
 #!/usr/bin/env python3
+#
+# Seamus McShane 2022
+#
+# This file is part of SensorMonitor.
+#
+# SensorMonitor is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License Version 3
+# as published by the Free Software Foundation.
+#
+# SensorMonitor is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU Lesser General Public License Version 3 for more details.
+#
 
 # Commandline args
 from argparse import ArgumentParser

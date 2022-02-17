@@ -19,8 +19,11 @@
 # TSL2591 (light, infrared,+lux via calculation)
 # LTR390 (als, +lux via calculation, uvs, +uvi via calculation)
 
-# Temperature, Humidity and Pressure
+# PI I2C
 from smbus import SMBus
+I2C_DEV=SMBus(1)
+
+# Temperature, Humidity and Pressure
 from sensors.BME280 import BME280
 
 # Light, IR, Lux
@@ -88,7 +91,7 @@ class WaveshareESH:
 		self.bme280_pressure = CBuffer(SAMPLE_WINDOW_LEN)
 
 		# Create a BME280 instance (SMBus 1)
-		self.bme280 = BME280(i2c_dev=SMBus(1))
+		self.bme280 = BME280(i2c_dev=I2C_DEV)
 		self.bme280.setup(mode="forced", temperature_oversampling=16, pressure_oversampling=16)
 
 		print("BME280 Ready")

@@ -14,15 +14,20 @@
 # See the GNU Lesser General Public License Version 3 for more details.
 #
 
-# Commandline args
-from argparse import ArgumentParser, BooleanOptionalAction
+# Commandline Arguments
+from argparse import ArgumentParser
 parser = ArgumentParser(description='Sensor Monitor')
 
-# Commandline Arguments
+# Sets the name of the boardname to load
 parser.add_argument('-boardname', help='A sensor board name.')
-parser.add_argument('-boardlist', '-bl', help='Prints the list of supported boards.', action=BooleanOptionalAction)
+
+# Sets boardlist to true when supplied
+parser.add_argument('-boardlist', '-bl', help='Prints the list of supported boards.', action='store_true')
+
+# Read the args
 args = parser.parse_args()
 
+# Display the board list
 boardList = args.boardlist
 if boardList:
 	print("\t\tBoard Support List")
@@ -32,7 +37,7 @@ if boardList:
 	print("WaveshareESH\t\tWaveshare Enviroment Sensor HAT")
 	exit()
 
-# The choosen board
+# Load the choosen board or exit
 boardName = args.boardname
 if boardName != None:
 	print("Choosen Board " + boardName)

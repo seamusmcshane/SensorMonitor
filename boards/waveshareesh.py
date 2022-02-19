@@ -18,6 +18,7 @@
 # BME280 (Temperature, Humidity and Pressure),
 # TSL2591 (light, infrared,+lux via calculation)
 # LTR390 (als, +lux via calculation, uvs, +uvi via calculation)
+# SGP40 (voc index)
 
 # PI I2C
 from smbus import SMBus
@@ -31,6 +32,9 @@ from python_tsl2591 import tsl2591
 
 # ALS, LUX, UV, UVI
 from sensors.LTR390 import LTR390
+
+# VOC Index
+from sensors.SGP40 import SGP40
 
 from utility.cbuffer import CBuffer
 from utility.picputemperature import PICPUTemp
@@ -57,10 +61,25 @@ class Values:
 		self.uvs = 0.0
 		self.uvi = 0.0
 
+		self.voci = 0.0
+
 	def toJSON(self):
 		return "{ \"values\" :" + json.dumps(self, default=lambda o: o.__dict__, sort_keys=False) + "}"
 
 class WaveshareESH:
+
+	def initSGP40(self):
+
+		# Buffer for the SGP40 Stats
+		self.sgp40_voci = CBuffer(SAMPLE_WINDOW_LEN)
+
+		# Values are just for initialization
+		self.sgp40 = SGP40(i2c_dev=I2C_DEV, relative_humidity = 50, temperature_c = 25)
+
+		print("SGP40 requires warmup, waiting 10 seconds...")
+		self.sgp40.begin(10)
+
+		print("SGP40 Ready")
 
 	def initLTR390(self):
 
@@ -116,6 +135,7 @@ class WaveshareESH:
 		self.initBME280()
 		self.initTSL2591()
 		self.initLTR390()
+		self.initSGP40()
 
 		# Sensor values for formating into json
 		self.currentValues = Values()
@@ -182,6 +202,21 @@ class WaveshareESH:
 
 		self.currentValues.als, self.currentValues.lux2 = als, lux
 		self.currentValues.uvs, self.currentValues.uvi = uvs, uvi
+
+		# SGP40
+
+		# Note! - Here we set the current values for the SGP40
+		# Enables temperature and humidity compensation
+		self.sgp40.set_envparams(humidity,temperature)
+		tvoci = self.sgp40.get_voc_index()
+
+		# Add to our buffer
+		self.sgp40_voci.addValue(tvoci)
+
+		# get our smoothed value
+		voci = self.sgp40_voci.getValue();
+
+		self.currentValues.voci = voci
 
 	def getJSONValues(self):
 		""" Return values formated as json """

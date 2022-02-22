@@ -20,10 +20,20 @@ chmod a+x SensorMon.py
 
 Access data via http://IP-Address/values
 
+EnviroPlus JSON Example
+
+```json
+{ "values" :{"proximity": 0.3, "lux": 7.9485, "temperature": 23.822164891392717, "humidity": 21.84497014828306, "pressure": 1014.5156068612221, "reducing": 532923.0769230772, "oxidising": 100623.65508066287, "nh3": 106876.96667643895}}
+```
 EnviroPlus Display Modes
 
 ![Sensors, sensors mode](/images/enviroplus_sensors.jpg)   ![Clock, clock mode](/images/enviroplus_clock.jpg)
 
+WaveshareESH JSON Example
+
+```json
+{ "values" :{"temperature": 14.478260589506146, "humidity": 36.774254188532026, "pressure": 1015.4887851182655, "fullspectrum": 2047, "infrared": 902, "lux1": 46.325952, "als": 3841.4, "lux2": 128.04666666666665, "uvs": 3.4, "uvi": 0.0014782608695652175, "voci": 25.0}}
+```
 
 ### List supported boards
 

@@ -40,7 +40,7 @@ from utility.cbuffer import CBuffer
 from utility.picputemperature import PICPUTemp
 
 # Assuming updating at 1 sample per second this is ten seconds of samples
-SAMPLE_WINDOW_LEN = 10;
+SAMPLE_WINDOW_LEN = 10
 
 # A class to describe what our json returned values will look like
 import json
@@ -129,7 +129,7 @@ class WaveshareESH:
 		# Best done with a physical thermometer or a calibrated reference sensor.
 		# Value depends on how close the sensor is to the PI, and the Pi's thermals.
 		# 0.9 was used with a tall header outside a case with - 1cm distance to the PI.
-		# PI is inside a aluminum case, with very low load.
+		# PI is inside a aluminium case, with very low load.
 		self.smooth_factor = smooth_factor
 
 		self.initBME280()
@@ -140,7 +140,7 @@ class WaveshareESH:
 		# Sensor values for formating into json
 		self.currentValues = Values()
 
-		print("Waveshare Environment Sensor HAT Ready");
+		print("Waveshare Environment Sensor HAT Ready")
 
 	def smooth_temp_value(self, raw_value, smooth_factor):
 		""" Adjusts the BME280 temperature reading to account for distance
@@ -166,23 +166,23 @@ class WaveshareESH:
 		# Update the cpu temp which is used to smooth/adjust the bme280 temp
 		self.cpu_temp.update()
 
-		# BME280 lib is modified to coalesc the three calls
+		# BME280 lib is modified to coalesce the three calls
 		thp = self.bme280.get_thp()
-		temperature =  self.smooth_temp_value(thp[0], self.smooth_factor)	# calls temperature specifc smooth
+		temperature =  self.smooth_temp_value(thp[0], self.smooth_factor)	# calls temperature specific smooth
 		self.bme280_humidity.addValue(thp[1])
 		humidity = self.bme280_humidity.getValue()
 		self.bme280_pressure.addValue(thp[2])
 		pressure = self.bme280_pressure.getValue()
-		# Write current smoothed data to json values
+		# Write current smoothed data to JSON values
 		self.currentValues.temperature, self.currentValues.humidity, self.currentValues.pressure = temperature, humidity, pressure
 
 		# TSL2591
 		fullspectrum, infrared = self.tsl2591.get_full_luminosity()
 		lux = self.tsl2591.calculate_lux(fullspectrum, infrared)
-		self.tsl2591_full.addValue(fullspectrum);
-		self.tsl2591_ir.addValue(infrared);
-		self.tsl2591_lux.addValue(lux);
-		# Write current smoothed data to json values
+		self.tsl2591_full.addValue(fullspectrum)
+		self.tsl2591_ir.addValue(infrared)
+		self.tsl2591_lux.addValue(lux)
+		# Write current smoothed data to JSON values
 		self.currentValues.fullspectrum, self.currentValues.infrared, self.currentValues.lux1 = fullspectrum, infrared, lux
 
 		# LTS390
@@ -195,10 +195,10 @@ class WaveshareESH:
 		self.ltr390_uvi.addValue(aluu[3])
 
 		# get our smoothed values
-		als = self.ltr390_als.getValue();
-		lux = self.ltr390_lux.getValue();
-		uvs = self.ltr390_uvs.getValue();
-		uvi = self.ltr390_uvi.getValue();
+		als = self.ltr390_als.getValue()
+		lux = self.ltr390_lux.getValue()
+		uvs = self.ltr390_uvs.getValue()
+		uvi = self.ltr390_uvi.getValue()
 
 		self.currentValues.als, self.currentValues.lux2 = als, lux
 		self.currentValues.uvs, self.currentValues.uvi = uvs, uvi
@@ -214,7 +214,7 @@ class WaveshareESH:
 		self.sgp40_voci.addValue(tvoci)
 
 		# get our smoothed value
-		voci = self.sgp40_voci.getValue();
+		voci = self.sgp40_voci.getValue()
 
 		self.currentValues.voci = voci
 

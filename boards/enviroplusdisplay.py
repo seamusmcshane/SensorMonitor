@@ -292,7 +292,7 @@ class Display:
 			pfill = (64,0,0)
 
 		draw.rectangle((c1x, 50, 82, 50 + INFO_FONT_SIZE + 2 ), fill=pfill)
-		draw.text((c1x, 50), self.s_pressure + "mb", font=INFO_TEXT_FONT, fill=FG_TEXT_COLOR)
+		draw.text((c1x, 50), self.s_pressure + "hPa", font=INFO_TEXT_FONT, fill=FG_TEXT_COLOR)
 
 		# lux (indoor bad lighting)
 		lfill = (0,0,0)

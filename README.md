@@ -32,7 +32,7 @@ Access data via http://IP-Address/values
 
 ## Dependencies
 
-These dependencies are based whats needed after a fresh Raspbian GNU/Linux 11 install.
+These dependencies are based whats needed after a fresh Raspbian/PI OS GNU/Linux 10/11 install.
 
 For other distributions you will need to substitute equivilant commands and packages.
 

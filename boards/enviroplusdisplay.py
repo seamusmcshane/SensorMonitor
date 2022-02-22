@@ -266,7 +266,7 @@ class Display:
 			tfill = (64,0,0)
 
 		draw.rectangle((c1x, 22, 82, 22 + INFO_FONT_SIZE + 2 ), fill=tfill)
-		draw.text((c1x, 22), self.s_temperature + "c", font=INFO_TEXT_FONT, fill=FG_TEXT_COLOR)
+		draw.text((c1x, 22), self.s_temperature + "°C", font=INFO_TEXT_FONT, fill=FG_TEXT_COLOR)
 
 		# humidity
 		hfill = (0,0,0)

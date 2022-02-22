@@ -20,6 +20,10 @@ chmod a+x SensorMon.py
 
 Access data via http://IP-Address/values
 
+EnviroPlus Display Modes
+
+![Sensors, sensors mode](/images/enviroplus_sensors.jpg)   ![Clock, clock mode](/images/enviroplus_clock.jpg)
+
 
 ### List supported boards
 

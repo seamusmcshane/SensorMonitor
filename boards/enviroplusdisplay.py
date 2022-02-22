@@ -309,7 +309,7 @@ class Display:
 			lfill = (0,64,0)
 
 		draw.rectangle((c1x, 64, 82, 64 + INFO_FONT_SIZE + 2 ), fill=lfill)
-		draw.text((c1x, 64), self.s_lux + "lx", font=INFO_TEXT_FONT, fill=FG_TEXT_COLOR)
+		draw.text((c1x, 64), self.s_lux + "Lux", font=INFO_TEXT_FONT, fill=FG_TEXT_COLOR)
 
 		draw.text((c2x, 22), self.s_reducing + "CO", font=INFO_TEXT_FONT, fill=FG_TEXT_COLOR)
 

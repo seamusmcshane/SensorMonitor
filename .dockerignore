@@ -1,0 +1,10 @@
+.git
+.gitignore
+.dockerignore
+.idea
+Dockerfile
+docker-compose.yml
+COPYING.LGPL
+LICIENCE.md
+README.md
+images

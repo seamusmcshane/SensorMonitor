@@ -142,24 +142,6 @@ class WaveshareESH:
 
 		print("Waveshare Environment Sensor HAT Ready")
 
-	def smooth_temp_value(self, raw_value, smooth_factor):
-		""" Adjusts the BME280 temperature reading to account for distance
-		to the PI CPU which genrates enough heat to affect the reading.
-		Smoothing assumes you are sampling the sensor more than you are
-		storing the data.
-		"""
-
-		self.bme280_temps.addValue(raw_value)
-
-		cpu_avg_temp = self.cpu_temp.getTemperature()
-
-		avg_temp = self.bme280_temps.getValue()
-
-		# Dampens the average temp by the cpu average temp.
-		# Dampening is scaled using a smooth factor for fine tuning.
-		# Adjust smooth_factor based on how close the sensor is to the cpu/case and how hot they get.
-		return (avg_temp - ((cpu_avg_temp - avg_temp) / smooth_factor))
-
 	def updateValues(self):
 		""" Performs a collection of values from supported devices """
 
@@ -168,7 +150,7 @@ class WaveshareESH:
 
 		# BME280 lib is modified to coalesce the three calls
 		thp = self.bme280.get_thp()
-		temperature =  self.smooth_temp_value(thp[0], self.smooth_factor)	# calls temperature specific smooth
+		temperature = thp[0]
 		self.bme280_humidity.addValue(thp[1])
 		humidity = self.bme280_humidity.getValue()
 		self.bme280_pressure.addValue(thp[2])
